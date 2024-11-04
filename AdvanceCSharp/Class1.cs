@@ -160,7 +160,7 @@ namespace AdvanceCSharp
 
         public static void Main(string[] args)
         {
-            IExecutableClass e   = new AdaptorPatternDemo();
+            IExecutableClass e   = new DecoratorDemo();
             e.Execute();
             Console.ReadLine();
         }
