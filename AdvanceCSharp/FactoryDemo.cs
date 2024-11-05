@@ -41,7 +41,7 @@ namespace AdvanceCSharp
 
         internal static Truck GetTruck()
         {
-            return new Truck(new MongoDBDatabase());
+            return new Truck(new MongoDBDatabase(new ConsoleLogger())) ;
         }
     }
 

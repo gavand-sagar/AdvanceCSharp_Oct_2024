@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,7 +36,7 @@ namespace AdvanceCSharp
 
         public void walk()
         {
-            throw new NotImplementedException();
+           Console.WriteLine("This is a dog, trying to walk.");
         }
     }
     public class Duck : ISwimmer, IWalker
@@ -92,11 +93,16 @@ namespace AdvanceCSharp
 
     public class SQLDatabase : IDatabase, IEntityOperations
     {
+        ILogger logger;
         public void connect()
         {
-            Console.WriteLine("Connecting to SQL DB");
+            logger.Log("Connecting to SQL DB");
         }
 
+        public SQLDatabase(ILogger logger)
+        {
+            this.logger = logger;
+        }
         public void deleteEntity(object o)
         {
             throw new NotImplementedException();
@@ -112,13 +118,31 @@ namespace AdvanceCSharp
             throw new NotImplementedException();
         }
     }
+    public  interface ILogger {
+        void Log(object message);
+    }
+
+    public class ConsoleLogger : ILogger
+    {
+
+        public void Log(object message)
+        {
+            Console.WriteLine(message);
+        }
+    }
 
 
     public class MongoDBDatabase : IDatabase
     {
+        ILogger logger;
         public void connect()
         {
-            Console.WriteLine("Connecting to mongo DB");
+            logger.Log("Connecting to mongo DB");
+        }
+
+        public MongoDBDatabase(ILogger logger)
+        {
+            this.logger = logger;
         }
 
         public void deleteEntity(object o)
@@ -160,7 +184,16 @@ namespace AdvanceCSharp
 
         public static void Main(string[] args)
         {
-            IExecutableClass e   = new ChainOfResponsibility();
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton<ILogger, ConsoleLogger>();
+            serviceCollection.AddSingleton<IDatabase, MongoDBDatabase>();
+            serviceCollection.AddSingleton<IWalker, Dog>();
+            
+            serviceCollection.AddSingleton<IExecutableClass, DependencyInjectionDemo>();
+
+
+            MyContainer.ServiceProvider = serviceCollection.BuildServiceProvider();
+            IExecutableClass e = MyContainer.ServiceProvider.GetService<IExecutableClass>();
             e.Execute();
             Console.ReadLine();
         }

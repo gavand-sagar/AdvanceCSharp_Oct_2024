@@ -23,7 +23,7 @@ namespace AdvanceCSharp
                .WithPassword("123")
                .WithRole("123")
                .WithEmail("123")
-               .WithDb(new SQLDatabase())
+               .WithDb(new SQLDatabase(new ConsoleLogger()))
                .Build();
 
 
